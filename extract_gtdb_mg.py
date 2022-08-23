@@ -83,8 +83,8 @@ def run_tigrfam_search(genes_aa: str, hmm_file: str, tmp_folder: str, cpu: int =
     p = subprocess.Popen(args, stdout=subprocess.PIPE, encoding='utf-8')
     stdout, stderr = p.communicate()
 
-    print(stdout)
-    print(stderr)
+    # print(stdout)
+    # print(stderr)
 
     if p.returncode != 0:
         print('Non-zero exit code returned when running prodigal: {stdout}')
@@ -395,43 +395,28 @@ def write_markers(output_path: str, header2mg, sequence_file: str):
 
 
 
+def make_dir(path: str):
+    if os.path.isdir(path):
+        print("Directory {} already exists.".format(path))
+        return
+    try:
+        os.makedirs(path)
+    except OSError:
+        print ("Creation of the directory %s failed" % path)
+    else:
+        print ("Successfully created the directory %s" % path)
 
-    # def _topHit(self, tigrfam_file):
-#     """Determine top hits to TIGRFAMs.
 
-#     A gene is assigned to a single TIGRFAM
-#     family. This will be the top hit among
-#     all TIGRFAM HMMs and pass the threshold
-#     for the HMM.
+def rm_dir(path: str):
 
-#     Parameters
-#     ----------
-#     tigrfam_file : str
-#         Name of file containing hits to TIGRFAM HMMs.
-#     """
-#     assembly_dir, filename = os.path.split(tigrfam_file)
-#     genome_id = filename.replace(self.tigrfam_suffix, '')
-#     tophit_file = TopHitTigrFile(self.output_dir, genome_id)
-
-#     hit_dict = dict()
-
-#     # Populate the top-hit file.
-#     with open(tigrfam_file, 'r') as fh_tigrfam:
-#         for line in fh_tigrfam:
-#             if line[0] == '#':
-#                 continue
-
-#             line_split = line.split()
-#             gene_id = line_split[0]
-#             hmm_id = line_split[3]
-#             evalue = float(line_split[4])
-#             bitscore = float(line_split[5])
-
-#             add_hit(hit_dict ,gene_id, hmm_id, evalue, bitscore)
-
-#     # Write the top-hit file to disk and calculate checksum.
-#     tophit_file.write()
-
+    try:
+        for f in os.listdir(path):
+            os.remove(os.path.join(path, f))
+        os.rmdir(path)
+    except OSError:
+        print ("Deletion of the directory %s failed" % path)
+    else:
+        print ("Successfully deleted the directory %s" % path)
 
 
 
@@ -476,13 +461,14 @@ parser.add_argument("-g", "--genome", type=str,
                     help="Genome file(s) (Mutually exclusive to (--aa/--nt))")
 
 
-parser.add_argument("-o", "--output_dir", 
-                    required=True, type=str,
+parser.add_argument("-o", "--output_dir", type=str, required=True,
                     help="Marker_gene output folder")
-parser.add_argument("-p", "--tmp", type=str,
+parser.add_argument("-p", "--tmp", type=str, required=True,
                     help="Temporary folder")
 parser.add_argument("-k", "--keep_tmp", action="store_true",
                     help="Keep temporary files")
+parser.add_argument("-x", "--overwrite_tmp", action="store_true",
+                    help="Ignore if tmp dir already exists")
 
 
 args = parser.parse_args()
@@ -523,10 +509,19 @@ if args.genome:
 ##########################################################################
 
 tmp_dir = args.tmp
+
+if os.path.isdir(tmp_dir) and not args.overwrite_tmp:
+    print("Tmp dir {} already exists. Please delete dir first".format(tmp_dir))
+    exit()
+
+make_dir(tmp_dir)
+
 output_dir = args.output_dir
 
 
 for index in range(input_len):
+    aa_file = None
+    nt_file = None
 
     if from_genomes:
         input_genome = input_genomes[index]
@@ -542,19 +537,18 @@ for index in range(input_len):
         nt_file = input_nt[index] if input_nt else None
 
 
-        print("file: {}".format(aa_file))
+        print("aa file: {}".format(aa_file))
+        print("nt file: {}".format(nt_file))
 
         input_basename = os.path.basename(aa_file)
         input_basename = input_basename.rsplit('.', 1)[0]
 
-        print(aa_file)
-        print(nt_file)
 
     pfam_success, pfam_hits = run_pfam_search(aa_file, PFAM_FOLDER, tmp_dir)
     tigr_success, tigr_hits = run_tigrfam_search(aa_file, TIGRFAM_FILE, tmp_dir)
 
-    print("{} -> {}".format(pfam_success, pfam_hits))
-    print("{} -> {}".format(tigr_success, tigr_hits))
+    # print("{} -> {}".format(pfam_success, pfam_hits))
+    # print("{} -> {}".format(tigr_success, tigr_hits))
 
     dict_tigr = tophit_tigr(tigr_hits)
     dict_pfam = tophit_pfam(pfam_hits)
@@ -572,6 +566,12 @@ for index in range(input_len):
     mg_basename = os.path.join(output_dir, input_basename)
 
     write_markers("{}.faa".format(mg_basename), header2mg, aa_file)
+    print("{}.faa".format(mg_basename))
     if nt_file:
         write_markers("{}.fna".format(mg_basename), header2mg, nt_file)
+        print("{}.fna".format(mg_basename))
 
+
+
+if not args.keep_tmp:
+    rm_dir(tmp_dir)
