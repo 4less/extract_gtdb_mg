@@ -469,9 +469,14 @@ parser.add_argument("-k", "--keep_tmp", action="store_true",
                     help="Keep temporary files")
 parser.add_argument("-x", "--overwrite_tmp", action="store_true",
                     help="Ignore if tmp dir already exists")
+parser.add_argument("-t", "--threads", type=int,
+                    help="Number of threads to use.")
+parser.add_argument("-l", "--list_only", action="store_true",
+                    help="Do not output marker genes as sequence. Output a single tab-delimited file with sequence header in column 1 and marker gene name in column 2. The output file is located in the specified output folder with the filename 'marker_genes.tsv'")
 
 
 args = parser.parse_args()
+
 
 from_genomes: bool = True
 
@@ -503,6 +508,20 @@ if args.genome:
     input_len = len(input_genomes)
 
 
+output_dir = args.output_dir
+
+threads = 1
+
+if args.threads: threads = args.threads
+
+list_only = False
+list_output = None
+marker_genes_file = "marker_genes.tsv"
+if args.list_only: 
+    list_only = True 
+    list_output = open(os.path.join(output_dir, marker_genes_file), 'w')
+
+
 
 ##########################################################################
 ### Run ###
@@ -516,7 +535,6 @@ if os.path.isdir(tmp_dir) and not args.overwrite_tmp:
 
 make_dir(tmp_dir)
 
-output_dir = args.output_dir
 
 
 for index in range(input_len):
@@ -544,8 +562,8 @@ for index in range(input_len):
         input_basename = input_basename.rsplit('.', 1)[0]
 
 
-    pfam_success, pfam_hits = run_pfam_search(aa_file, PFAM_FOLDER, tmp_dir)
-    tigr_success, tigr_hits = run_tigrfam_search(aa_file, TIGRFAM_FILE, tmp_dir)
+    pfam_success, pfam_hits = run_pfam_search(aa_file, PFAM_FOLDER, tmp_dir, cpu=threads)
+    tigr_success, tigr_hits = run_tigrfam_search(aa_file, TIGRFAM_FILE, tmp_dir, cpu=threads)
 
     # print("{} -> {}".format(pfam_success, pfam_hits))
     # print("{} -> {}".format(tigr_success, tigr_hits))
@@ -565,12 +583,19 @@ for index in range(input_len):
 
     mg_basename = os.path.join(output_dir, input_basename)
 
-    write_markers("{}.faa".format(mg_basename), header2mg, aa_file)
-    print("{}.faa".format(mg_basename))
-    if nt_file:
-        write_markers("{}.fna".format(mg_basename), header2mg, nt_file)
-        print("{}.fna".format(mg_basename))
+    if list_only:
+        for header,mg in header2mg.items():
+            list_output.write("{}\t{}\n".format(header,mg))
+        
+    else:
+        write_markers("{}.faa".format(mg_basename), header2mg, aa_file)
+        print("{}.faa".format(mg_basename))
+        if nt_file:
+            write_markers("{}.fna".format(mg_basename), header2mg, nt_file)
+            print("{}.fna".format(mg_basename))
 
+
+if list_output: list_output.close()
 
 
 if not args.keep_tmp:
