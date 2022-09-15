@@ -5,8 +5,9 @@ import os
 import subprocess
 from lib.Scan.PfamScan import PfamScan
 
-hmmsearch_cmd='hmmsearch'
-prodigal_cmd='prodigal'
+hmmsearch_cmd = 'hmmsearch'
+prodigal_cmd = 'prodigal'
+
 
 ###
 
@@ -38,7 +39,6 @@ def run_prodigal(genome_file: str, tmp_folder: str, closed_ends=False):
 
     args = ['prodigal', '-m', '-p', 'single', '-q', '-g', '11',
             '-a', aa_out, '-d', nt_out, '-i', genome_file]
-   
 
     print(' '.join(args))
 
@@ -50,11 +50,9 @@ def run_prodigal(genome_file: str, tmp_folder: str, closed_ends=False):
 
     if p.returncode != 0:
         print('Non-zero exit code returned when running prodigal: {stdout}')
-        return False,None,None
+        return False, None, None
 
-
-    return True,aa_out,nt_out
-
+    return True, aa_out, nt_out
 
 
 def run_pfam_search(genes_aa: str, hmm_dir: str, tmp_folder: str, cpu: int = 1):
@@ -67,7 +65,7 @@ def run_pfam_search(genes_aa: str, hmm_dir: str, tmp_folder: str, cpu: int = 1):
     pfam_scan.search()
     pfam_scan.write_results(pfam_output, None, None, None, None)
 
-    return True,pfam_output
+    return True, pfam_output
 
 
 def run_tigrfam_search(genes_aa: str, hmm_file: str, tmp_folder: str, cpu: int = 1):
@@ -78,7 +76,7 @@ def run_tigrfam_search(genes_aa: str, hmm_file: str, tmp_folder: str, cpu: int =
     tigr_output_hits = os.path.join(tmp_folder, "{}_tigr.hits".format(genes_basename))
 
     args = [hmmsearch_cmd, '-o', tigr_output, '--tblout', tigr_output_hits,
-            '--noali', '--notextw', '--cut_nc', '--cpu', str(cpu), hmm_file, genes_aa ]
+            '--noali', '--notextw', '--cut_nc', '--cpu', str(cpu), hmm_file, genes_aa]
 
     p = subprocess.Popen(args, stdout=subprocess.PIPE, encoding='utf-8')
     stdout, stderr = p.communicate()
@@ -88,9 +86,9 @@ def run_tigrfam_search(genes_aa: str, hmm_file: str, tmp_folder: str, cpu: int =
 
     if p.returncode != 0:
         print('Non-zero exit code returned when running prodigal: {stdout}')
-        return False,None,None
+        return False, None, None
 
-    return True,tigr_output_hits
+    return True, tigr_output_hits
 
 
 ##########################################################################
@@ -195,8 +193,6 @@ def add_hit_tigrfam(hit_dict, gene_id: str, hmm_id: str, e_val: float, bit_score
         add_hit(hit_dict, gene_id, hmm_id, e_val, bit_score)
 
 
-
-
 def print_tophits(hit_dict):
     header = ['Gene Id', 'Top hits (Family id,e-value,bitscore)']
     print('\t'.join(header))
@@ -208,7 +204,6 @@ def print_tophits(hit_dict):
         concat_hits = ';'.join(out_hits)
         # fh.write(f'{gene_id}\t{concat_hits}\n')
         print(f'{gene_id}\t{concat_hits}')
-
 
 
 def write_tophits(hit_dict, output: str):
@@ -225,7 +220,6 @@ def write_tophits(hit_dict, output: str):
             outfile.write(f'{gene_id}\t{concat_hits}\n')
 
 
-
 def tophit_pfam(pfam_file: str):
     hit_dict = dict()
     with open(pfam_file, 'r') as fh_pfam:
@@ -239,7 +233,6 @@ def tophit_pfam(pfam_file: str):
             evalue = float(line_split[12])
             bitscore = float(line_split[11])
             add_hit(hit_dict, gene_id, hmm_id, evalue, bitscore)
-
 
     return hit_dict
 
@@ -258,13 +251,9 @@ def tophit_tigr(tigrfam_file: str):
             bitscore = float(line_split[5])
 
             # add_hit(hit_dict ,gene_id, hmm_id, evalue, bitscore)
-            add_hit_tigrfam(hit_dict ,gene_id, hmm_id, evalue, bitscore)
+            add_hit_tigrfam(hit_dict, gene_id, hmm_id, evalue, bitscore)
 
     return hit_dict
-
-
-
-
 
 
 class Record:
@@ -274,6 +263,7 @@ class Record:
 
     def append(self, sequence: str):
         self.sequence += sequence
+
 
 def ReadFasta(file_path: str):
     header = ""
@@ -286,7 +276,7 @@ def ReadFasta(file_path: str):
                 header = line
                 if sequence and header:
                     record = Record(header)
-                    record.sequence = sequence 
+                    record.sequence = sequence
                     yield record
                 sequence = ""
             else:
@@ -354,7 +344,6 @@ class Hit(object):
         return f'{self.hmm_id},{self.e_val},{self.bit_score}'
 
 
-
 def get_header_to_mg(top_hits_pfam_filepath: str, top_hits_tigr_filepath: str):
     hit_dictionary = dict()
     for file_path in (top_hits_pfam_filepath, top_hits_tigr_filepath):
@@ -366,22 +355,38 @@ def get_header_to_mg(top_hits_pfam_filepath: str, top_hits_tigr_filepath: str):
 
                 gene_id = tokens[0]
 
-                hmm_id, dummy1, dummy = tokens[1].split(',')
+                hmm_id, dummy1, dummy2 = tokens[1].split(',')
 
                 if hmm_id not in hit_dictionary:
                     hit_dictionary[hmm_id] = list()
                 hit_dictionary[hmm_id].append(gene_id)
 
-
         extract_list = dict()
 
-        for marker_name,gene_id_list in hit_dictionary.items():
-            #print("{} -> {} {}".format(marker_name, len(gene_id_list), gene_id_list))
+        for marker_name, gene_id_list in hit_dictionary.items():
             if len(gene_id_list) == 1:
                 extract_list[gene_id_list[0]] = marker_name
 
     return extract_list
 
+def get_header_to_mg_meta(top_hits_pfam_filepath: str, top_hits_tigr_filepath: str):
+    hit_dictionary = dict()
+    for file_path in (top_hits_pfam_filepath, top_hits_tigr_filepath):
+        with open(file_path, 'r') as file:
+            for line in file:
+                line = line.rstrip()
+
+                tokens = line.split('\t')
+
+                gene_id = tokens[0]
+
+                hmm_id, dummy1, dummy2 = tokens[1].split(',')
+
+                if hmm_id not in hit_dictionary:
+                    hit_dictionary[hmm_id] = list()
+                hit_dictionary[hmm_id].append(gene_id)
+
+    return hit_dictionary
 
 def write_markers(output_path: str, header2mg, sequence_file: str):
     with open(output_path, 'w') as output:
@@ -394,7 +399,6 @@ def write_markers(output_path: str, header2mg, sequence_file: str):
                 output.write(record.sequence + '\n')
 
 
-
 def make_dir(path: str):
     if os.path.isdir(path):
         print("Directory {} already exists.".format(path))
@@ -402,25 +406,20 @@ def make_dir(path: str):
     try:
         os.makedirs(path)
     except OSError:
-        print ("Creation of the directory %s failed" % path)
+        print("Creation of the directory %s failed" % path)
     else:
-        print ("Successfully created the directory %s" % path)
+        print("Successfully created the directory %s" % path)
 
 
 def rm_dir(path: str):
-
     try:
         for f in os.listdir(path):
             os.remove(os.path.join(path, f))
         os.rmdir(path)
     except OSError:
-        print ("Deletion of the directory %s failed" % path)
+        print("Deletion of the directory %s failed" % path)
     else:
-        print ("Successfully deleted the directory %s" % path)
-
-
-
-
+        print("Successfully deleted the directory %s" % path)
 
 
 ##########################################################################
@@ -428,14 +427,12 @@ def rm_dir(path: str):
 ##########################################################################
 
 os.path.dirname(os.path.realpath(__file__))
-script_file = os.path.realpath(os.path.join( os.getcwd(),sys.argv[0]))
+script_file = os.path.realpath(os.path.join(os.getcwd(), sys.argv[0]))
 script_dir = os.path.dirname(script_file)
 
 # Relative paths to hmm files
-PFAM_FOLDER=os.path.join(script_dir, 'hmm/pfam')
-TIGRFAM_FILE=os.path.join(script_dir, 'hmm/tigrfam/tigrfam.hmm')
-
-
+PFAM_FOLDER = os.path.join(script_dir, 'hmm/pfam')
+TIGRFAM_FILE = os.path.join(script_dir, 'hmm/tigrfam/tigrfam.hmm')
 
 if not has_tool(hmmsearch_cmd):
     print("Need tool {}".format(hmmsearch_cmd))
@@ -444,22 +441,18 @@ if not has_tool(prodigal_cmd):
     print("Need tool {}".format(prodigal_cmd))
     exit()
 
-
-
 # Minimal script for extracting PFAM MARKERS
 parser = argparse.ArgumentParser()
 
-#Group 1
+# Group 1
 parser.add_argument("-a", "--aa", type=str,
                     help="One or more files with genes (Protein) (Mutually exclusive to (--genomes))")
 parser.add_argument("-n", "--nt", type=str,
                     help="One or more files with genes (DNA) (Mutually exclusive to (--genomes) and requires --aa)")
 
-
-#Group 2
+# Group 2
 parser.add_argument("-g", "--genome", type=str,
                     help="Genome file(s) (Mutually exclusive to (--aa/--nt))")
-
 
 parser.add_argument("-o", "--output_dir", type=str, required=True,
                     help="Marker_gene output folder")
@@ -474,9 +467,7 @@ parser.add_argument("-t", "--threads", type=int,
 parser.add_argument("-l", "--list_only", action="store_true",
                     help="Do not output marker genes as sequence. Output a single tab-delimited file with sequence header in column 1 and marker gene name in column 2. The output file is located in the specified output folder with the filename 'marker_genes.tsv'")
 
-
 args = parser.parse_args()
-
 
 from_genomes: bool = True
 
@@ -501,12 +492,10 @@ if args.aa:
             exit()
     input_len = len(input_aa)
 
-
 if args.genome:
     from_genomes = True
     input_genomes = args.genome.split(',')
     input_len = len(input_genomes)
-
 
 output_dir = args.output_dir
 
@@ -517,11 +506,11 @@ if args.threads: threads = args.threads
 list_only = False
 list_output = None
 marker_genes_file = "marker_genes.tsv"
-if args.list_only: 
-    list_only = True 
+marker_genes_meta_file = "marker_genes_meta.tsv"
+if args.list_only:
+    list_only = True
     list_output = open(os.path.join(output_dir, marker_genes_file), 'w')
-
-
+    list_meta_output = open(os.path.join(output_dir, marker_genes_meta_file), 'w')
 
 ##########################################################################
 ### Run ###
@@ -534,8 +523,6 @@ if os.path.isdir(tmp_dir) and not args.overwrite_tmp:
     exit()
 
 make_dir(tmp_dir)
-
-
 
 for index in range(input_len):
     aa_file = None
@@ -554,13 +541,11 @@ for index in range(input_len):
         aa_file = input_aa[index]
         nt_file = input_nt[index] if input_nt else None
 
-
         print("aa file: {}".format(aa_file))
         print("nt file: {}".format(nt_file))
 
         input_basename = os.path.basename(aa_file)
         input_basename = input_basename.rsplit('.', 1)[0]
-
 
     pfam_success, pfam_hits = run_pfam_search(aa_file, PFAM_FOLDER, tmp_dir, cpu=threads)
     tigr_success, tigr_hits = run_tigrfam_search(aa_file, TIGRFAM_FILE, tmp_dir, cpu=threads)
@@ -578,15 +563,21 @@ for index in range(input_len):
     write_tophits(dict_pfam, pfam_tophit_file)
 
     header2mg = get_header_to_mg(pfam_tophit_file, tigr_tophit_file)
+    header2mg_meta = get_header_to_mg_meta(pfam_tophit_file, tigr_tophit_file)
+
+
 
     # print(header2mg)
 
     mg_basename = os.path.join(output_dir, input_basename)
 
     if list_only:
-        for header,mg in header2mg.items():
-            list_output.write("{}\t{}\n".format(header,mg))
-        
+        for header, mg in header2mg.items():
+            list_output.write("{}\t{}\n".format(header, mg))
+        for header, mg in header2mg_meta.items():
+            for ele in mg:
+                list_meta_output.write("{}\t{}\n".format(header, ele))
+
     else:
         write_markers("{}.faa".format(mg_basename), header2mg, aa_file)
         print("{}.faa".format(mg_basename))
@@ -594,8 +585,9 @@ for index in range(input_len):
             write_markers("{}.fna".format(mg_basename), header2mg, nt_file)
             print("{}.fna".format(mg_basename))
 
-
-if list_output: list_output.close()
+if list_output:
+    list_output.close()
+    list_meta_output.close()
 
 
 if not args.keep_tmp:
