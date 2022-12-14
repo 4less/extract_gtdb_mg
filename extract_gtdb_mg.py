@@ -509,6 +509,7 @@ marker_genes_file = "marker_genes.tsv"
 marker_genes_meta_file = "marker_genes_meta.tsv"
 if args.list_only:
     list_only = True
+    print("open: {}".format(os.path.join(output_dir, marker_genes_file)))
     list_output = open(os.path.join(output_dir, marker_genes_file), 'w')
     list_meta_output = open(os.path.join(output_dir, marker_genes_meta_file), 'w')
 
@@ -576,6 +577,7 @@ for index in range(input_len):
             list_output.write("{}\t{}\n".format(header, mg))
         for header, mg in header2mg_meta.items():
             for ele in mg:
+                print("element: {}".format(ele))
                 list_meta_output.write("{}\t{}\n".format(header, ele))
 
     else:
