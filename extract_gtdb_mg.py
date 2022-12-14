@@ -445,7 +445,6 @@ def get_header_to_mg_meta(top_hits_pfam_filepath: str, top_hits_tigr_filepath: s
         skip = skip_header
         with open(file_path, 'r') as file:
             for line in file:
-                print("line: {}".format(line))
                 if skip:
                     skip = False
                     continue
