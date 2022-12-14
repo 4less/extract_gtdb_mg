@@ -9,7 +9,77 @@ hmmsearch_cmd = 'hmmsearch'
 prodigal_cmd = 'prodigal'
 
 
+
+# Marker information
+BAC120_MARKERS = {"PFAM": ["PF00380.20.hmm", "PF00410.20.hmm", "PF00466.21.hmm",
+                           "PF01025.20.hmm", "PF02576.18.hmm", "PF03726.15.hmm"],
+                  "TIGRFAM": ["TIGR00006.HMM", "TIGR00019.HMM", "TIGR00020.HMM",
+                              "TIGR00029.HMM", "TIGR00043.HMM", "TIGR00054.HMM",
+                              "TIGR00059.HMM", "TIGR00061.HMM", "TIGR00064.HMM",
+                              "TIGR00065.HMM", "TIGR00082.HMM", "TIGR00083.HMM",
+                              "TIGR00084.HMM", "TIGR00086.HMM", "TIGR00088.HMM",
+                              "TIGR00090.HMM", "TIGR00092.HMM", "TIGR00095.HMM",
+                              "TIGR00115.HMM", "TIGR00116.HMM", "TIGR00138.HMM",
+                              "TIGR00158.HMM", "TIGR00166.HMM", "TIGR00168.HMM",
+                              "TIGR00186.HMM", "TIGR00194.HMM", "TIGR00250.HMM",
+                              "TIGR00337.HMM", "TIGR00344.HMM", "TIGR00362.HMM",
+                              "TIGR00382.HMM", "TIGR00392.HMM", "TIGR00396.HMM",
+                              "TIGR00398.HMM", "TIGR00414.HMM", "TIGR00416.HMM",
+                              "TIGR00420.HMM", "TIGR00431.HMM", "TIGR00435.HMM",
+                              "TIGR00436.HMM", "TIGR00442.HMM", "TIGR00445.HMM",
+                              "TIGR00456.HMM", "TIGR00459.HMM", "TIGR00460.HMM",
+                              "TIGR00468.HMM", "TIGR00472.HMM", "TIGR00487.HMM",
+                              "TIGR00496.HMM", "TIGR00539.HMM", "TIGR00580.HMM",
+                              "TIGR00593.HMM", "TIGR00615.HMM", "TIGR00631.HMM",
+                              "TIGR00634.HMM", "TIGR00635.HMM", "TIGR00643.HMM",
+                              "TIGR00663.HMM", "TIGR00717.HMM", "TIGR00755.HMM",
+                              "TIGR00810.HMM", "TIGR00922.HMM", "TIGR00928.HMM",
+                              "TIGR00959.HMM", "TIGR00963.HMM", "TIGR00964.HMM",
+                              "TIGR00967.HMM", "TIGR01009.HMM", "TIGR01011.HMM",
+                              "TIGR01017.HMM", "TIGR01021.HMM", "TIGR01029.HMM",
+                              "TIGR01032.HMM", "TIGR01039.HMM", "TIGR01044.HMM",
+                              "TIGR01059.HMM", "TIGR01063.HMM", "TIGR01066.HMM",
+                              "TIGR01071.HMM", "TIGR01079.HMM", "TIGR01082.HMM",
+                              "TIGR01087.HMM", "TIGR01128.HMM", "TIGR01146.HMM",
+                              "TIGR01164.HMM", "TIGR01169.HMM", "TIGR01171.HMM",
+                              "TIGR01302.HMM", "TIGR01391.HMM", "TIGR01393.HMM",
+                              "TIGR01394.HMM", "TIGR01510.HMM", "TIGR01632.HMM",
+                              "TIGR01951.HMM", "TIGR01953.HMM", "TIGR02012.HMM",
+                              "TIGR02013.HMM", "TIGR02027.HMM", "TIGR02075.HMM",
+                              "TIGR02191.HMM", "TIGR02273.HMM", "TIGR02350.HMM",
+                              "TIGR02386.HMM", "TIGR02397.HMM", "TIGR02432.HMM",
+                              "TIGR02729.HMM", "TIGR03263.HMM", "TIGR03594.HMM",
+                              "TIGR03625.HMM", "TIGR03632.HMM", "TIGR03654.HMM",
+                              "TIGR03723.HMM", "TIGR03725.HMM", "TIGR03953.HMM"]}
+
+
+AR53_MARKERS = {"PFAM": ["PF04919.13.hmm","PF07541.13.hmm","PF01000.27.hmm",
+                        "PF00687.22.hmm","PF00466.21.hmm","PF00827.18.hmm","PF01280.21.hmm","PF01090.20.hmm",
+                        "PF01200.19.hmm","PF01015.19.hmm","PF00900.21.hmm","PF00410.20.hmm"],
+                "TIGRFAM":
+                        ["TIGR00037.HMM","TIGR00064.HMM","TIGR00111.HMM",
+                        "TIGR00134.HMM","TIGR00279.HMM","TIGR00291.HMM","TIGR00323.HMM",
+                        "TIGR00335.HMM","TIGR00373.HMM","TIGR00405.HMM","TIGR00448.HMM",
+                        "TIGR00483.HMM","TIGR00491.HMM","TIGR00522.HMM","TIGR00967.HMM",
+                        "TIGR00982.HMM","TIGR01008.HMM","TIGR01012.HMM","TIGR01018.HMM",
+                        "TIGR01020.HMM","TIGR01028.HMM","TIGR01046.HMM","TIGR01052.HMM",
+                        "TIGR01171.HMM","TIGR01213.HMM","TIGR01952.HMM","TIGR02236.HMM",
+                        "TIGR02338.HMM","TIGR02389.HMM","TIGR02390.HMM","TIGR03626.HMM",
+                        "TIGR03627.HMM","TIGR03628.HMM","TIGR03629.HMM","TIGR03670.HMM",
+                        "TIGR03671.HMM","TIGR03672.HMM","TIGR03673.HMM","TIGR03674.HMM",
+                        "TIGR03676.HMM","TIGR03680.HMM"]}
+
 ###
+
+marker_dict = dict()
+for marker in BAC120_MARKERS['PFAM'] + BAC120_MARKERS['TIGRFAM']:
+    marker_dict[marker[:-4]] = 'BAC'
+for marker in AR53_MARKERS['PFAM'] + AR53_MARKERS['TIGRFAM']:
+    if marker in marker_dict:
+        marker_dict[marker[:-4]] = 'BOTH'
+    else:
+        marker_dict[marker[:-4]] = 'AR'
+
 
 def has_tool(cmd: str):
     try:
@@ -369,22 +439,28 @@ def get_header_to_mg(top_hits_pfam_filepath: str, top_hits_tigr_filepath: str):
 
     return extract_list
 
-def get_header_to_mg_meta(top_hits_pfam_filepath: str, top_hits_tigr_filepath: str):
+def get_header_to_mg_meta(top_hits_pfam_filepath: str, top_hits_tigr_filepath: str, skip_header: bool = True):
     hit_dictionary = dict()
     for file_path in (top_hits_pfam_filepath, top_hits_tigr_filepath):
+        skip = skip_header
         with open(file_path, 'r') as file:
             for line in file:
+                print("line: {}".format(line))
+                if skip:
+                    skip = False
+                    continue
+
                 line = line.rstrip()
 
                 tokens = line.split('\t')
 
                 gene_id = tokens[0]
 
-                hmm_id, dummy1, dummy2 = tokens[1].split(',')
+                hmm_id, evalue, bitscore = tokens[1].split(';')[0].split(',')
 
                 if hmm_id not in hit_dictionary:
                     hit_dictionary[hmm_id] = list()
-                hit_dictionary[hmm_id].append(gene_id)
+                hit_dictionary[hmm_id].append( (gene_id, evalue, bitscore) ) 
 
     return hit_dictionary
 
@@ -399,27 +475,32 @@ def write_markers(output_path: str, header2mg, sequence_file: str):
                 output.write(record.sequence + '\n')
 
 
-def make_dir(path: str):
+def make_dir(path: str, silent: bool = True):
     if os.path.isdir(path):
-        print("Directory {} already exists.".format(path))
+        if not silent:
+            print("Directory {} already exists.".format(path))
         return
     try:
         os.makedirs(path)
     except OSError:
-        print("Creation of the directory %s failed" % path)
+        if not silent:
+            print("Creation of the directory %s failed" % path)
     else:
-        print("Successfully created the directory %s" % path)
+        if not silent:
+            print("Successfully created the directory %s" % path)
 
 
-def rm_dir(path: str):
+def rm_dir(path: str, silent: bool = True):
     try:
         for f in os.listdir(path):
             os.remove(os.path.join(path, f))
         os.rmdir(path)
     except OSError:
-        print("Deletion of the directory %s failed" % path)
+        if not silent:
+            print("Deletion of the directory %s failed" % path)
     else:
-        print("Successfully deleted the directory %s" % path)
+        if not silent:
+            print("Successfully deleted the directory %s" % path)
 
 
 ##########################################################################
@@ -466,6 +547,10 @@ parser.add_argument("-t", "--threads", type=int,
                     help="Number of threads to use.")
 parser.add_argument("-l", "--list_only", action="store_true",
                     help="Do not output marker genes as sequence. Output a single tab-delimited file with sequence header in column 1 and marker gene name in column 2. The output file is located in the specified output folder with the filename 'marker_genes.tsv'")
+parser.add_argument("-s", "--silent", action="store_true",
+                    help="No output")
+parser.add_argument("-m", "--meta", action="store_true",
+                    help="Input is not single genome but metagenome (proteins from multiple potential genomes)")
 
 args = parser.parse_args()
 
@@ -503,15 +588,12 @@ threads = 1
 
 if args.threads: threads = args.threads
 
-list_only = False
 list_output = None
 marker_genes_file = "marker_genes.tsv"
 marker_genes_meta_file = "marker_genes_meta.tsv"
-if args.list_only:
-    list_only = True
-    print("open: {}".format(os.path.join(output_dir, marker_genes_file)))
-    list_output = open(os.path.join(output_dir, marker_genes_file), 'w')
-    list_meta_output = open(os.path.join(output_dir, marker_genes_meta_file), 'w')
+list_only = args.list_only
+silent = args.silent
+meta = args.meta
 
 ##########################################################################
 ### Run ###
@@ -532,7 +614,7 @@ for index in range(input_len):
     if from_genomes:
         input_genome = input_genomes[index]
 
-        print("file: {}".format(input_genome))
+        # print("file: {}".format(input_genome))
 
         input_basename = os.path.basename(input_genome)
         input_basename = input_basename.rsplit('.', 1)[0]
@@ -542,8 +624,8 @@ for index in range(input_len):
         aa_file = input_aa[index]
         nt_file = input_nt[index] if input_nt else None
 
-        print("aa file: {}".format(aa_file))
-        print("nt file: {}".format(nt_file))
+        # print("aa file: {}".format(aa_file))
+        # print("nt file: {}".format(nt_file))
 
         input_basename = os.path.basename(aa_file)
         input_basename = input_basename.rsplit('.', 1)[0]
@@ -563,9 +645,10 @@ for index in range(input_len):
     write_tophits(dict_tigr, tigr_tophit_file)
     write_tophits(dict_pfam, pfam_tophit_file)
 
-    header2mg = get_header_to_mg(pfam_tophit_file, tigr_tophit_file)
-    header2mg_meta = get_header_to_mg_meta(pfam_tophit_file, tigr_tophit_file)
-
+    if meta:
+        header2mg_meta = get_header_to_mg_meta(pfam_tophit_file, tigr_tophit_file)
+    else:
+        header2mg = get_header_to_mg(pfam_tophit_file, tigr_tophit_file)
 
 
     # print(header2mg)
@@ -573,19 +656,28 @@ for index in range(input_len):
     mg_basename = os.path.join(output_dir, input_basename)
 
     if list_only:
-        for header, mg in header2mg.items():
-            list_output.write("{}\t{}\n".format(header, mg))
-        for header, mg in header2mg_meta.items():
-            for ele in mg:
-                print("element: {}".format(ele))
-                list_meta_output.write("{}\t{}\n".format(header, ele))
+        if not meta:
+            list_output = open(os.path.join(output_dir, marker_genes_file), 'w')
+            for header, mg in header2mg.items():
+                list_output.write("{}\t{}\n".format(header, mg))
+            list_output.close()
+        else:
+            list_meta_output = open(os.path.join(output_dir, marker_genes_meta_file), 'w')
+            # list_meta_output.write('\t'.join(["gene", "marker", "marker_type", "evalue", "bitscore"]))
+            for marker, genes in header2mg_meta.items():
+                marker_type = marker_dict[marker]
+                for gene, evalue, bitscore in genes:
+                    if not silent:
+                        print(marker, gene, evalue, bitscore)
+                    list_meta_output.write("{}\t{}\t{}\t{}\t{}\n".format(gene, marker, marker_type, evalue, bitscore))
+            list_meta_output.close()
 
     else:
         write_markers("{}.faa".format(mg_basename), header2mg, aa_file)
-        print("{}.faa".format(mg_basename))
+        # print("{}.faa".format(mg_basename))
         if nt_file:
             write_markers("{}.fna".format(mg_basename), header2mg, nt_file)
-            print("{}.fna".format(mg_basename))
+            # print("{}.fna".format(mg_basename))
 
 if list_output:
     list_output.close()
