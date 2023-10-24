@@ -5,6 +5,13 @@ import os
 import subprocess
 from lib.Scan.PfamScan import PfamScan
 
+
+# There have been issues with processing the hmmer output due to 'excessive' recursion.
+# Maybe that is a problem with the meta flag and the files are too big
+# Fix: Kasia
+sys.setrecursionlimit(2000)
+
+
 hmmsearch_cmd = 'hmmsearch'
 prodigal_cmd = 'prodigal'
 
